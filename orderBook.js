@@ -1,40 +1,36 @@
+const reconcileOrder = (existingBook, incomingOrder) => {
+  const updatedBook = []
+  let newTransaction = incomingOrder
 
-function reconcileOrder(existingBook, incomingOrder) {
-  let updatedBook = []
-
-  if (existingBook.length === 0) { updatedBook.push(incomingOrder)
-
-    return updatedBook }
-  for (var i = 0; i < existingBook.length; i++) {
-    if (existingBook[i].type === incomingOrder.type) { updatedBook.push(existingBook[i]) }
-
-    else {
-      if (existingBook[i].price !== incomingOrder.price) {
-        updatedBook.push(incomingOrder)
-      }
-      if (existingBook[i].price === incomingOrder.price) {
-        if (existingBook[i].quantity !== incomingOrder.quantity) {
-
-        }
-      }
-
-    }
+  for (let i = 0; i < existingBook.length; i++) {
+    if (existingBook[i].price === incomingOrder.price && existingBook[i].type !== incomingOrder.type) {
+      newTransaction = transactionToLog(existingBook[i], newTransaction)
+    } else if (existingBook[i].price > incomingOrder.price && existingBook[i].type !== incomingOrder.type &&
+              existingBook[i].type === 'buy') {
+      newTransaction = transactionToLog(existingBook[i], newTransaction)
+    } else { updatedBook.push(existingBook[i]) }
   }
+  if (newTransaction !== null) {
+    updatedBook.push(newTransaction)
+  }
+
+  return updatedBook
 }
 
-/*
-if existingBook == empty -> add to updatedBook
-if existingBook !== empty -> compare incomingOrder.type to existingBook.type
+const transactionToLog = (existingBook, newTransaction) => {
+  if ((existingBook.quantity) - (newTransaction.quantity) === 0) {
+    return null
+  }
+  if ((existingBook.quantity) - (newTransaction.quantity) < 0) {
+    const newQuantity = (newTransaction.quantity) - (existingBook.quantity)
 
+    return { ...existingBook, quantity: newQuantity, type: newTransaction.type }
+  }
+  const newQuantity = (existingBook.quantity) - (newTransaction.quantity)
 
+  return { ...existingBook, quantity: newQuantity }
+}
 
-      if existingBook.type == incomingOrder.type -> add to updatedBook
-      if existingBook.type !== incomingOrder.type -> compare price
-
-            if existingBook.price !== incomingOrder.price -> add to updatedBook
-            if existingBook.price == incomingOrder.price -> compare quantity
-
-                  if existingBook.quantity == incomingOrder.quantit
-
-*/
 module.exports = reconcileOrder
+
+  
